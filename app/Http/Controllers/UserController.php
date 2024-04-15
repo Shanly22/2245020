@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Requests\UserLoginRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 
@@ -37,6 +38,27 @@ class UserController extends Controller
         }
 
         $user->remember_token = Str::uuid()->toString();
+        $user->save();
+        return new UserResource($user);
+    }
+
+    public function get(Request $request): UserResource
+    {
+        $user = Auth::user();
+        return new UserResource($user);
+    }
+
+    public function update(UserUpdateRequest $request): UserResource
+    {
+        $data = $request->validated();
+        $user = Auth::user();
+
+        if (isset($data['password'])) {
+            $user->password = Hash::make($data['password']);
+        }
+        if (isset($data['name'])) {
+            $user->name = $data['name'];
+        }
         $user->save();
         return new UserResource($user);
     }

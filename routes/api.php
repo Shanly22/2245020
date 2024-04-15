@@ -22,4 +22,9 @@ route::group(['prefix'=>'v1'], function(){
     // api/v1/users
     Route::post('/users',[App\Http\Controllers\UserController::class,'register']);
     Route::post('/users/login',[App\Http\Controllers\UserController::class,'login']);
+
+    Route::middleware(App\Http\Middleware\ApiAuthMiddleware::class)->group(function (){
+        Route::get('/users/profile',[App\Http\Controllers\UserController::class,'get']);
+        route::patch('/users/profile',[App\Http\Controllers\UserController::class,'update']);
+    });
 });
